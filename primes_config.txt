@@ -1,1 +1,3 @@
+dispatcher localhost:5001
+consolidator localhost:5002
 fileserver localhost:5003
