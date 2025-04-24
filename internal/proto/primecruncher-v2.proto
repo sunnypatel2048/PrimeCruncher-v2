@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package primecruncher_v2;
+
+option go_package = "./internal/proto";
+
+service FileServerService {
+    rpc FetchSegment (FetchSegmentRequest) returns (stream FetchSegmentResponse);
+}
+
+message FetchSegmentRequest {
+    string pathname = 1;
+    int64 start = 2;
+    int64 length = 3;
+    int64 chunk_size = 4;
+}
+
+message FetchSegmentResponse {
+    bytes chunk = 1;
+}
