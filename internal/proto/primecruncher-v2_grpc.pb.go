@@ -121,7 +121,9 @@ var DispatcherService_ServiceDesc = grpc.ServiceDesc{
 }
 
 const (
-	ConsolidatorService_SubmitResult_FullMethodName = "/primecruncher_v2.ConsolidatorService/SubmitResult"
+	ConsolidatorService_SubmitResult_FullMethodName     = "/primecruncher_v2.ConsolidatorService/SubmitResult"
+	ConsolidatorService_RegisterWorker_FullMethodName   = "/primecruncher_v2.ConsolidatorService/RegisterWorker"
+	ConsolidatorService_DeregisterWorker_FullMethodName = "/primecruncher_v2.ConsolidatorService/DeregisterWorker"
 )
 
 // ConsolidatorServiceClient is the client API for ConsolidatorService service.
@@ -129,6 +131,8 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ConsolidatorServiceClient interface {
 	SubmitResult(ctx context.Context, in *SubmitResultRequest, opts ...grpc.CallOption) (*SubmitResultResponse, error)
+	RegisterWorker(ctx context.Context, in *RegisterWorkerRequest, opts ...grpc.CallOption) (*RegisterWorkerResponse, error)
+	DeregisterWorker(ctx context.Context, in *DeregisterWorkerRequest, opts ...grpc.CallOption) (*DeregisterWorkerResponse, error)
 }
 
 type consolidatorServiceClient struct {
@@ -149,11 +153,33 @@ func (c *consolidatorServiceClient) SubmitResult(ctx context.Context, in *Submit
 	return out, nil
 }
 
+func (c *consolidatorServiceClient) RegisterWorker(ctx context.Context, in *RegisterWorkerRequest, opts ...grpc.CallOption) (*RegisterWorkerResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(RegisterWorkerResponse)
+	err := c.cc.Invoke(ctx, ConsolidatorService_RegisterWorker_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *consolidatorServiceClient) DeregisterWorker(ctx context.Context, in *DeregisterWorkerRequest, opts ...grpc.CallOption) (*DeregisterWorkerResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DeregisterWorkerResponse)
+	err := c.cc.Invoke(ctx, ConsolidatorService_DeregisterWorker_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ConsolidatorServiceServer is the server API for ConsolidatorService service.
 // All implementations must embed UnimplementedConsolidatorServiceServer
 // for forward compatibility.
 type ConsolidatorServiceServer interface {
 	SubmitResult(context.Context, *SubmitResultRequest) (*SubmitResultResponse, error)
+	RegisterWorker(context.Context, *RegisterWorkerRequest) (*RegisterWorkerResponse, error)
+	DeregisterWorker(context.Context, *DeregisterWorkerRequest) (*DeregisterWorkerResponse, error)
 	mustEmbedUnimplementedConsolidatorServiceServer()
 }
 
@@ -166,6 +192,12 @@ type UnimplementedConsolidatorServiceServer struct{}
 
 func (UnimplementedConsolidatorServiceServer) SubmitResult(context.Context, *SubmitResultRequest) (*SubmitResultResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SubmitResult not implemented")
+}
+func (UnimplementedConsolidatorServiceServer) RegisterWorker(context.Context, *RegisterWorkerRequest) (*RegisterWorkerResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RegisterWorker not implemented")
+}
+func (UnimplementedConsolidatorServiceServer) DeregisterWorker(context.Context, *DeregisterWorkerRequest) (*DeregisterWorkerResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeregisterWorker not implemented")
 }
 func (UnimplementedConsolidatorServiceServer) mustEmbedUnimplementedConsolidatorServiceServer() {}
 func (UnimplementedConsolidatorServiceServer) testEmbeddedByValue()                             {}
@@ -206,6 +238,42 @@ func _ConsolidatorService_SubmitResult_Handler(srv interface{}, ctx context.Cont
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ConsolidatorService_RegisterWorker_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RegisterWorkerRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ConsolidatorServiceServer).RegisterWorker(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ConsolidatorService_RegisterWorker_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ConsolidatorServiceServer).RegisterWorker(ctx, req.(*RegisterWorkerRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ConsolidatorService_DeregisterWorker_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeregisterWorkerRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ConsolidatorServiceServer).DeregisterWorker(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ConsolidatorService_DeregisterWorker_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ConsolidatorServiceServer).DeregisterWorker(ctx, req.(*DeregisterWorkerRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // ConsolidatorService_ServiceDesc is the grpc.ServiceDesc for ConsolidatorService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -216,6 +284,14 @@ var ConsolidatorService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SubmitResult",
 			Handler:    _ConsolidatorService_SubmitResult_Handler,
+		},
+		{
+			MethodName: "RegisterWorker",
+			Handler:    _ConsolidatorService_RegisterWorker_Handler,
+		},
+		{
+			MethodName: "DeregisterWorker",
+			Handler:    _ConsolidatorService_DeregisterWorker_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

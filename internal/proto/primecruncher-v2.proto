@@ -11,6 +11,8 @@ service DispatcherService {
 
 service ConsolidatorService {
     rpc SubmitResult (SubmitResultRequest) returns (SubmitResultResponse);
+    rpc RegisterWorker (RegisterWorkerRequest) returns (RegisterWorkerResponse);
+    rpc DeregisterWorker (DeregisterWorkerRequest) returns (DeregisterWorkerResponse);
 }
 
 service FileServerService {
@@ -34,6 +36,14 @@ message SubmitResultRequest {
 }
 
 message SubmitResultResponse {}
+
+message RegisterWorkerRequest {}
+
+message RegisterWorkerResponse {}
+
+message DeregisterWorkerRequest {}
+
+message DeregisterWorkerResponse {}
 
 message FetchSegmentRequest {
     string pathname = 1;
