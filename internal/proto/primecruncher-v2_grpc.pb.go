@@ -19,6 +19,210 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
+	DispatcherService_GetJob_FullMethodName = "/primecruncher_v2.DispatcherService/GetJob"
+)
+
+// DispatcherServiceClient is the client API for DispatcherService service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+type DispatcherServiceClient interface {
+	GetJob(ctx context.Context, in *GetJobRequest, opts ...grpc.CallOption) (*GetJobResponse, error)
+}
+
+type dispatcherServiceClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewDispatcherServiceClient(cc grpc.ClientConnInterface) DispatcherServiceClient {
+	return &dispatcherServiceClient{cc}
+}
+
+func (c *dispatcherServiceClient) GetJob(ctx context.Context, in *GetJobRequest, opts ...grpc.CallOption) (*GetJobResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetJobResponse)
+	err := c.cc.Invoke(ctx, DispatcherService_GetJob_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// DispatcherServiceServer is the server API for DispatcherService service.
+// All implementations must embed UnimplementedDispatcherServiceServer
+// for forward compatibility.
+type DispatcherServiceServer interface {
+	GetJob(context.Context, *GetJobRequest) (*GetJobResponse, error)
+	mustEmbedUnimplementedDispatcherServiceServer()
+}
+
+// UnimplementedDispatcherServiceServer must be embedded to have
+// forward compatible implementations.
+//
+// NOTE: this should be embedded by value instead of pointer to avoid a nil
+// pointer dereference when methods are called.
+type UnimplementedDispatcherServiceServer struct{}
+
+func (UnimplementedDispatcherServiceServer) GetJob(context.Context, *GetJobRequest) (*GetJobResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetJob not implemented")
+}
+func (UnimplementedDispatcherServiceServer) mustEmbedUnimplementedDispatcherServiceServer() {}
+func (UnimplementedDispatcherServiceServer) testEmbeddedByValue()                           {}
+
+// UnsafeDispatcherServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to DispatcherServiceServer will
+// result in compilation errors.
+type UnsafeDispatcherServiceServer interface {
+	mustEmbedUnimplementedDispatcherServiceServer()
+}
+
+func RegisterDispatcherServiceServer(s grpc.ServiceRegistrar, srv DispatcherServiceServer) {
+	// If the following call pancis, it indicates UnimplementedDispatcherServiceServer was
+	// embedded by pointer and is nil.  This will cause panics if an
+	// unimplemented method is ever invoked, so we test this at initialization
+	// time to prevent it from happening at runtime later due to I/O.
+	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
+		t.testEmbeddedByValue()
+	}
+	s.RegisterService(&DispatcherService_ServiceDesc, srv)
+}
+
+func _DispatcherService_GetJob_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetJobRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DispatcherServiceServer).GetJob(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: DispatcherService_GetJob_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DispatcherServiceServer).GetJob(ctx, req.(*GetJobRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// DispatcherService_ServiceDesc is the grpc.ServiceDesc for DispatcherService service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var DispatcherService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "primecruncher_v2.DispatcherService",
+	HandlerType: (*DispatcherServiceServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "GetJob",
+			Handler:    _DispatcherService_GetJob_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "internal/proto/primecruncher-v2.proto",
+}
+
+const (
+	ConsolidatorService_SubmitResult_FullMethodName = "/primecruncher_v2.ConsolidatorService/SubmitResult"
+)
+
+// ConsolidatorServiceClient is the client API for ConsolidatorService service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+type ConsolidatorServiceClient interface {
+	SubmitResult(ctx context.Context, in *SubmitResultRequest, opts ...grpc.CallOption) (*SubmitResultResponse, error)
+}
+
+type consolidatorServiceClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewConsolidatorServiceClient(cc grpc.ClientConnInterface) ConsolidatorServiceClient {
+	return &consolidatorServiceClient{cc}
+}
+
+func (c *consolidatorServiceClient) SubmitResult(ctx context.Context, in *SubmitResultRequest, opts ...grpc.CallOption) (*SubmitResultResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SubmitResultResponse)
+	err := c.cc.Invoke(ctx, ConsolidatorService_SubmitResult_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// ConsolidatorServiceServer is the server API for ConsolidatorService service.
+// All implementations must embed UnimplementedConsolidatorServiceServer
+// for forward compatibility.
+type ConsolidatorServiceServer interface {
+	SubmitResult(context.Context, *SubmitResultRequest) (*SubmitResultResponse, error)
+	mustEmbedUnimplementedConsolidatorServiceServer()
+}
+
+// UnimplementedConsolidatorServiceServer must be embedded to have
+// forward compatible implementations.
+//
+// NOTE: this should be embedded by value instead of pointer to avoid a nil
+// pointer dereference when methods are called.
+type UnimplementedConsolidatorServiceServer struct{}
+
+func (UnimplementedConsolidatorServiceServer) SubmitResult(context.Context, *SubmitResultRequest) (*SubmitResultResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SubmitResult not implemented")
+}
+func (UnimplementedConsolidatorServiceServer) mustEmbedUnimplementedConsolidatorServiceServer() {}
+func (UnimplementedConsolidatorServiceServer) testEmbeddedByValue()                             {}
+
+// UnsafeConsolidatorServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to ConsolidatorServiceServer will
+// result in compilation errors.
+type UnsafeConsolidatorServiceServer interface {
+	mustEmbedUnimplementedConsolidatorServiceServer()
+}
+
+func RegisterConsolidatorServiceServer(s grpc.ServiceRegistrar, srv ConsolidatorServiceServer) {
+	// If the following call pancis, it indicates UnimplementedConsolidatorServiceServer was
+	// embedded by pointer and is nil.  This will cause panics if an
+	// unimplemented method is ever invoked, so we test this at initialization
+	// time to prevent it from happening at runtime later due to I/O.
+	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
+		t.testEmbeddedByValue()
+	}
+	s.RegisterService(&ConsolidatorService_ServiceDesc, srv)
+}
+
+func _ConsolidatorService_SubmitResult_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SubmitResultRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ConsolidatorServiceServer).SubmitResult(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ConsolidatorService_SubmitResult_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ConsolidatorServiceServer).SubmitResult(ctx, req.(*SubmitResultRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// ConsolidatorService_ServiceDesc is the grpc.ServiceDesc for ConsolidatorService service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var ConsolidatorService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "primecruncher_v2.ConsolidatorService",
+	HandlerType: (*ConsolidatorServiceServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "SubmitResult",
+			Handler:    _ConsolidatorService_SubmitResult_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "internal/proto/primecruncher-v2.proto",
+}
+
+const (
 	FileServerService_FetchSegment_FullMethodName = "/primecruncher_v2.FileServerService/FetchSegment"
 )
 

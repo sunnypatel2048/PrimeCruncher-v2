@@ -4,9 +4,36 @@ package primecruncher_v2;
 
 option go_package = "./internal/proto";
 
+
+service DispatcherService {
+    rpc GetJob (GetJobRequest) returns (GetJobResponse);
+}
+
+service ConsolidatorService {
+    rpc SubmitResult (SubmitResultRequest) returns (SubmitResultResponse);
+}
+
 service FileServerService {
     rpc FetchSegment (FetchSegmentRequest) returns (stream FetchSegmentResponse);
 }
+
+message GetJobRequest {}
+
+message GetJobResponse {
+    string pathname = 1;
+    int64 start = 2;
+    int64 length = 3;
+    bool done = 4; // Indicates no more jobs
+}
+
+message SubmitResultRequest {
+    string pathname = 1;
+    int64 start = 2;
+    int64 length = 3;
+    int64 prime_count = 4;
+}
+
+message SubmitResultResponse {}
 
 message FetchSegmentRequest {
     string pathname = 1;

@@ -21,6 +21,214 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+type GetJobRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetJobRequest) Reset() {
+	*x = GetJobRequest{}
+	mi := &file_internal_proto_primecruncher_v2_proto_msgTypes[0]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetJobRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetJobRequest) ProtoMessage() {}
+
+func (x *GetJobRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_internal_proto_primecruncher_v2_proto_msgTypes[0]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetJobRequest.ProtoReflect.Descriptor instead.
+func (*GetJobRequest) Descriptor() ([]byte, []int) {
+	return file_internal_proto_primecruncher_v2_proto_rawDescGZIP(), []int{0}
+}
+
+type GetJobResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Pathname      string                 `protobuf:"bytes,1,opt,name=pathname,proto3" json:"pathname,omitempty"`
+	Start         int64                  `protobuf:"varint,2,opt,name=start,proto3" json:"start,omitempty"`
+	Length        int64                  `protobuf:"varint,3,opt,name=length,proto3" json:"length,omitempty"`
+	Done          bool                   `protobuf:"varint,4,opt,name=done,proto3" json:"done,omitempty"` // Indicates no more jobs
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetJobResponse) Reset() {
+	*x = GetJobResponse{}
+	mi := &file_internal_proto_primecruncher_v2_proto_msgTypes[1]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetJobResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetJobResponse) ProtoMessage() {}
+
+func (x *GetJobResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_internal_proto_primecruncher_v2_proto_msgTypes[1]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetJobResponse.ProtoReflect.Descriptor instead.
+func (*GetJobResponse) Descriptor() ([]byte, []int) {
+	return file_internal_proto_primecruncher_v2_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *GetJobResponse) GetPathname() string {
+	if x != nil {
+		return x.Pathname
+	}
+	return ""
+}
+
+func (x *GetJobResponse) GetStart() int64 {
+	if x != nil {
+		return x.Start
+	}
+	return 0
+}
+
+func (x *GetJobResponse) GetLength() int64 {
+	if x != nil {
+		return x.Length
+	}
+	return 0
+}
+
+func (x *GetJobResponse) GetDone() bool {
+	if x != nil {
+		return x.Done
+	}
+	return false
+}
+
+type SubmitResultRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Pathname      string                 `protobuf:"bytes,1,opt,name=pathname,proto3" json:"pathname,omitempty"`
+	Start         int64                  `protobuf:"varint,2,opt,name=start,proto3" json:"start,omitempty"`
+	Length        int64                  `protobuf:"varint,3,opt,name=length,proto3" json:"length,omitempty"`
+	PrimeCount    int64                  `protobuf:"varint,4,opt,name=prime_count,json=primeCount,proto3" json:"prime_count,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SubmitResultRequest) Reset() {
+	*x = SubmitResultRequest{}
+	mi := &file_internal_proto_primecruncher_v2_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SubmitResultRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SubmitResultRequest) ProtoMessage() {}
+
+func (x *SubmitResultRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_internal_proto_primecruncher_v2_proto_msgTypes[2]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SubmitResultRequest.ProtoReflect.Descriptor instead.
+func (*SubmitResultRequest) Descriptor() ([]byte, []int) {
+	return file_internal_proto_primecruncher_v2_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *SubmitResultRequest) GetPathname() string {
+	if x != nil {
+		return x.Pathname
+	}
+	return ""
+}
+
+func (x *SubmitResultRequest) GetStart() int64 {
+	if x != nil {
+		return x.Start
+	}
+	return 0
+}
+
+func (x *SubmitResultRequest) GetLength() int64 {
+	if x != nil {
+		return x.Length
+	}
+	return 0
+}
+
+func (x *SubmitResultRequest) GetPrimeCount() int64 {
+	if x != nil {
+		return x.PrimeCount
+	}
+	return 0
+}
+
+type SubmitResultResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SubmitResultResponse) Reset() {
+	*x = SubmitResultResponse{}
+	mi := &file_internal_proto_primecruncher_v2_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SubmitResultResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SubmitResultResponse) ProtoMessage() {}
+
+func (x *SubmitResultResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_internal_proto_primecruncher_v2_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SubmitResultResponse.ProtoReflect.Descriptor instead.
+func (*SubmitResultResponse) Descriptor() ([]byte, []int) {
+	return file_internal_proto_primecruncher_v2_proto_rawDescGZIP(), []int{3}
+}
+
 type FetchSegmentRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Pathname      string                 `protobuf:"bytes,1,opt,name=pathname,proto3" json:"pathname,omitempty"`
@@ -33,7 +241,7 @@ type FetchSegmentRequest struct {
 
 func (x *FetchSegmentRequest) Reset() {
 	*x = FetchSegmentRequest{}
-	mi := &file_internal_proto_primecruncher_v2_proto_msgTypes[0]
+	mi := &file_internal_proto_primecruncher_v2_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -45,7 +253,7 @@ func (x *FetchSegmentRequest) String() string {
 func (*FetchSegmentRequest) ProtoMessage() {}
 
 func (x *FetchSegmentRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_internal_proto_primecruncher_v2_proto_msgTypes[0]
+	mi := &file_internal_proto_primecruncher_v2_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -58,7 +266,7 @@ func (x *FetchSegmentRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use FetchSegmentRequest.ProtoReflect.Descriptor instead.
 func (*FetchSegmentRequest) Descriptor() ([]byte, []int) {
-	return file_internal_proto_primecruncher_v2_proto_rawDescGZIP(), []int{0}
+	return file_internal_proto_primecruncher_v2_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *FetchSegmentRequest) GetPathname() string {
@@ -98,7 +306,7 @@ type FetchSegmentResponse struct {
 
 func (x *FetchSegmentResponse) Reset() {
 	*x = FetchSegmentResponse{}
-	mi := &file_internal_proto_primecruncher_v2_proto_msgTypes[1]
+	mi := &file_internal_proto_primecruncher_v2_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -110,7 +318,7 @@ func (x *FetchSegmentResponse) String() string {
 func (*FetchSegmentResponse) ProtoMessage() {}
 
 func (x *FetchSegmentResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_internal_proto_primecruncher_v2_proto_msgTypes[1]
+	mi := &file_internal_proto_primecruncher_v2_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -123,7 +331,7 @@ func (x *FetchSegmentResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use FetchSegmentResponse.ProtoReflect.Descriptor instead.
 func (*FetchSegmentResponse) Descriptor() ([]byte, []int) {
-	return file_internal_proto_primecruncher_v2_proto_rawDescGZIP(), []int{1}
+	return file_internal_proto_primecruncher_v2_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *FetchSegmentResponse) GetChunk() []byte {
@@ -137,7 +345,20 @@ var File_internal_proto_primecruncher_v2_proto protoreflect.FileDescriptor
 
 const file_internal_proto_primecruncher_v2_proto_rawDesc = "" +
 	"\n" +
-	"%internal/proto/primecruncher-v2.proto\x12\x10primecruncher_v2\"~\n" +
+	"%internal/proto/primecruncher-v2.proto\x12\x10primecruncher_v2\"\x0f\n" +
+	"\rGetJobRequest\"n\n" +
+	"\x0eGetJobResponse\x12\x1a\n" +
+	"\bpathname\x18\x01 \x01(\tR\bpathname\x12\x14\n" +
+	"\x05start\x18\x02 \x01(\x03R\x05start\x12\x16\n" +
+	"\x06length\x18\x03 \x01(\x03R\x06length\x12\x12\n" +
+	"\x04done\x18\x04 \x01(\bR\x04done\"\x80\x01\n" +
+	"\x13SubmitResultRequest\x12\x1a\n" +
+	"\bpathname\x18\x01 \x01(\tR\bpathname\x12\x14\n" +
+	"\x05start\x18\x02 \x01(\x03R\x05start\x12\x16\n" +
+	"\x06length\x18\x03 \x01(\x03R\x06length\x12\x1f\n" +
+	"\vprime_count\x18\x04 \x01(\x03R\n" +
+	"primeCount\"\x16\n" +
+	"\x14SubmitResultResponse\"~\n" +
 	"\x13FetchSegmentRequest\x12\x1a\n" +
 	"\bpathname\x18\x01 \x01(\tR\bpathname\x12\x14\n" +
 	"\x05start\x18\x02 \x01(\x03R\x05start\x12\x16\n" +
@@ -145,7 +366,11 @@ const file_internal_proto_primecruncher_v2_proto_rawDesc = "" +
 	"\n" +
 	"chunk_size\x18\x04 \x01(\x03R\tchunkSize\",\n" +
 	"\x14FetchSegmentResponse\x12\x14\n" +
-	"\x05chunk\x18\x01 \x01(\fR\x05chunk2t\n" +
+	"\x05chunk\x18\x01 \x01(\fR\x05chunk2`\n" +
+	"\x11DispatcherService\x12K\n" +
+	"\x06GetJob\x12\x1f.primecruncher_v2.GetJobRequest\x1a .primecruncher_v2.GetJobResponse2t\n" +
+	"\x13ConsolidatorService\x12]\n" +
+	"\fSubmitResult\x12%.primecruncher_v2.SubmitResultRequest\x1a&.primecruncher_v2.SubmitResultResponse2t\n" +
 	"\x11FileServerService\x12_\n" +
 	"\fFetchSegment\x12%.primecruncher_v2.FetchSegmentRequest\x1a&.primecruncher_v2.FetchSegmentResponse0\x01B\x12Z\x10./internal/protob\x06proto3"
 
@@ -161,16 +386,24 @@ func file_internal_proto_primecruncher_v2_proto_rawDescGZIP() []byte {
 	return file_internal_proto_primecruncher_v2_proto_rawDescData
 }
 
-var file_internal_proto_primecruncher_v2_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
+var file_internal_proto_primecruncher_v2_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
 var file_internal_proto_primecruncher_v2_proto_goTypes = []any{
-	(*FetchSegmentRequest)(nil),  // 0: primecruncher_v2.FetchSegmentRequest
-	(*FetchSegmentResponse)(nil), // 1: primecruncher_v2.FetchSegmentResponse
+	(*GetJobRequest)(nil),        // 0: primecruncher_v2.GetJobRequest
+	(*GetJobResponse)(nil),       // 1: primecruncher_v2.GetJobResponse
+	(*SubmitResultRequest)(nil),  // 2: primecruncher_v2.SubmitResultRequest
+	(*SubmitResultResponse)(nil), // 3: primecruncher_v2.SubmitResultResponse
+	(*FetchSegmentRequest)(nil),  // 4: primecruncher_v2.FetchSegmentRequest
+	(*FetchSegmentResponse)(nil), // 5: primecruncher_v2.FetchSegmentResponse
 }
 var file_internal_proto_primecruncher_v2_proto_depIdxs = []int32{
-	0, // 0: primecruncher_v2.FileServerService.FetchSegment:input_type -> primecruncher_v2.FetchSegmentRequest
-	1, // 1: primecruncher_v2.FileServerService.FetchSegment:output_type -> primecruncher_v2.FetchSegmentResponse
-	1, // [1:2] is the sub-list for method output_type
-	0, // [0:1] is the sub-list for method input_type
+	0, // 0: primecruncher_v2.DispatcherService.GetJob:input_type -> primecruncher_v2.GetJobRequest
+	2, // 1: primecruncher_v2.ConsolidatorService.SubmitResult:input_type -> primecruncher_v2.SubmitResultRequest
+	4, // 2: primecruncher_v2.FileServerService.FetchSegment:input_type -> primecruncher_v2.FetchSegmentRequest
+	1, // 3: primecruncher_v2.DispatcherService.GetJob:output_type -> primecruncher_v2.GetJobResponse
+	3, // 4: primecruncher_v2.ConsolidatorService.SubmitResult:output_type -> primecruncher_v2.SubmitResultResponse
+	5, // 5: primecruncher_v2.FileServerService.FetchSegment:output_type -> primecruncher_v2.FetchSegmentResponse
+	3, // [3:6] is the sub-list for method output_type
+	0, // [0:3] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
 	0, // [0:0] is the sub-list for extension extendee
 	0, // [0:0] is the sub-list for field type_name
@@ -187,9 +420,9 @@ func file_internal_proto_primecruncher_v2_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_internal_proto_primecruncher_v2_proto_rawDesc), len(file_internal_proto_primecruncher_v2_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   2,
+			NumMessages:   6,
 			NumExtensions: 0,
-			NumServices:   1,
+			NumServices:   3,
 		},
 		GoTypes:           file_internal_proto_primecruncher_v2_proto_goTypes,
 		DependencyIndexes: file_internal_proto_primecruncher_v2_proto_depIdxs,
