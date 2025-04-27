@@ -1,0 +1,84 @@
+package main
+
+import (
+	"context"
+	"flag"
+	"log/slog"
+	"os"
+	"os/signal"
+
+	"github.com/sunnypatel2048/primecruncher-v2/internal/config"
+	pb "github.com/sunnypatel2048/primecruncher-v2/internal/proto"
+	"github.com/sunnypatel2048/primecruncher-v2/internal/service"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
+)
+
+func main() {
+	chunkSize := flag.Int64("C", 1024, "Chunk size in bytes")
+	configPath := flag.String("config", "./primes_config.txt", "Path to config file")
+	flag.Parse()
+
+	if *configPath == "" {
+		slog.Error("Config file path required")
+		os.Exit(1)
+	}
+	if *chunkSize%8 != 0 {
+		slog.Error("Chunk size must be divisible by 8")
+		os.Exit(1)
+	}
+
+	cfg, err := config.LoadConfig(*configPath)
+	if err != nil {
+		slog.Error("Failed to load config", "error", err)
+		os.Exit(1)
+	}
+
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	// Connect to dispatcher
+	dispatcherConn, err := grpc.Dial(cfg.Dispatcher, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	if err != nil {
+		slog.Error("Failed to connect to dispatcher", "error", err)
+		os.Exit(1)
+	}
+	defer dispatcherConn.Close()
+	dispatcherClient := pb.NewDispatcherServiceClient(dispatcherConn)
+
+	// Connect to consolidator
+	consolidatorConn, err := grpc.Dial(cfg.Consolidator, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	if err != nil {
+		slog.Error("Failed to connect to consolidator", "error", err)
+		os.Exit(1)
+	}
+	defer consolidatorConn.Close()
+	consolidatorClient := pb.NewConsolidatorServiceClient(consolidatorConn)
+
+	// Connect to fileserver
+	fileServerConn, err := grpc.Dial(cfg.FileServer, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	if err != nil {
+		slog.Error("Failed to connect to fileserver", "error", err)
+		os.Exit(1)
+	}
+	defer fileServerConn.Close()
+	fileServerClient := pb.NewFileServerServiceClient(fileServerConn)
+
+	worker := service.NewWorker(dispatcherClient, consolidatorClient, fileServerClient, *chunkSize)
+	consolidatorClient.SubmitResult(ctx, &pb.SubmitResultRequest{}) // Register worker
+
+	sigChan := make(chan os.Signal, 1)
+	signal.Notify(sigChan, os.Interrupt)
+
+	go func() {
+		if err := worker.Run(ctx); err != nil {
+			slog.Error("Worker failed", "error", err)
+		}
+		consolidatorClient.SubmitResult(ctx, &pb.SubmitResultRequest{}) // Deregister worker
+		cancel()
+	}()
+
+	<-sigChan
+	slog.Info("Received shutdown signal")
+	cancel()
+}
