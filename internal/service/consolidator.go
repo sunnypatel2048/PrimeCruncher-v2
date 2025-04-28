@@ -5,7 +5,6 @@ import (
 	"log/slog"
 	"sync"
 	"sync/atomic"
-	"time"
 
 	pb "github.com/sunnypatel2048/primecruncher-v2/internal/proto"
 )
@@ -52,7 +51,12 @@ func (c *Consolidator) DeregisterWorker(ctx context.Context, req *pb.DeregisterW
 	slog.Info("Worker deregistered", "worker_id", req.WorkerId, "total_workers", currentWorkers)
 	if currentWorkers <= 0 {
 		slog.Info("All workers deregistered, closing workerDone")
-		close(c.workerDone)
+		select {
+		case <-c.closed:
+			// Already closed, no action needed
+		default:
+			close(c.workerDone)
+		}
 	}
 	return &pb.DeregisterWorkerResponse{}, nil
 }
@@ -77,10 +81,9 @@ func (c *Consolidator) SubmitResult(ctx context.Context, req *pb.SubmitResultReq
 	}
 }
 
-// aggregate processes results.
+// aggregate processes results until all workers are done.
 func (c *Consolidator) aggregate() {
 	defer c.wg.Done()
-	timeout := time.After(30 * time.Second) // Timeout if no activity
 	for {
 		select {
 		case result := <-c.results:
@@ -90,10 +93,6 @@ func (c *Consolidator) aggregate() {
 			}
 		case <-c.workerDone:
 			slog.Info("All workers done, shutting down consolidator")
-			close(c.closed)
-			return
-		case <-timeout:
-			slog.Warn("Consolidator timed out waiting for results")
 			close(c.closed)
 			return
 		}
