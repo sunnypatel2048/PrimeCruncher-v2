@@ -64,18 +64,32 @@ func main() {
 	defer fileServerConn.Close()
 	fileServerClient := pb.NewFileServerServiceClient(fileServerConn)
 
+	// Register worker
+	_, err = consolidatorClient.RegisterWorker(ctx, &pb.RegisterWorkerRequest{})
+	if err != nil {
+		slog.Error("Failed to register worker", "error", err)
+		os.Exit(1)
+	}
+	slog.Info("Worker registered successfully")
+
 	worker := service.NewWorker(dispatcherClient, consolidatorClient, fileServerClient, *chunkSize)
-	consolidatorClient.SubmitResult(ctx, &pb.SubmitResultRequest{}) // Register worker
 
 	sigChan := make(chan os.Signal, 1)
 	signal.Notify(sigChan, os.Interrupt)
 
 	go func() {
+		defer func() {
+			// Ensure deregistration happens even on error
+			if _, err := consolidatorClient.DeregisterWorker(ctx, &pb.DeregisterWorkerRequest{}); err != nil {
+				slog.Error("Failed to deregister worker", "error", err)
+			} else {
+				slog.Info("Worker deregistered successfully")
+			}
+			cancel()
+		}()
 		if err := worker.Run(ctx); err != nil {
 			slog.Error("Worker failed", "error", err)
 		}
-		consolidatorClient.SubmitResult(ctx, &pb.SubmitResultRequest{}) // Deregister worker
-		cancel()
 	}()
 
 	<-sigChan

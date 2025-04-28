@@ -96,8 +96,11 @@ func main() {
 	}()
 
 	// Wait for completion
+	slog.Info("Waiting for dispatcher to finish")
 	dispatcher.Wait()
+	slog.Info("Waiting for consolidator to finish")
 	consolidator.Wait()
+	slog.Info("All tasks completed, printing total")
 	fmt.Printf("Total primes: %d\n", consolidator.GetTotal())
 
 	// Shutdown
