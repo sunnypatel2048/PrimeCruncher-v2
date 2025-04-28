@@ -70,14 +70,6 @@ func main() {
 	defer fileServerConn.Close()
 	fileServerClient := pb.NewFileServerServiceClient(fileServerConn)
 
-	// Register worker
-	_, err = consolidatorClient.RegisterWorker(ctx, &pb.RegisterWorkerRequest{})
-	if err != nil {
-		slog.Error("Failed to register worker", "error", err)
-		os.Exit(1)
-	}
-	slog.Info("Worker registered successfully")
-
 	// Create worker instance
 	worker := service.NewWorker(dispatcherClient, consolidatorClient, fileServerClient, *chunkSize)
 
