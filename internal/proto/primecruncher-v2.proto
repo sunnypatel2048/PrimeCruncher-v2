@@ -33,15 +33,20 @@ message SubmitResultRequest {
     int64 start = 2;
     int64 length = 3;
     int64 prime_count = 4;
+    int64 worker_id = 5; // Added to track worker submitting result
 }
 
 message SubmitResultResponse {}
 
 message RegisterWorkerRequest {}
 
-message RegisterWorkerResponse {}
+message RegisterWorkerResponse {
+    int64 worker_id = 1; // Return assigned worker ID
+}
 
-message DeregisterWorkerRequest {}
+message DeregisterWorkerRequest {
+    int64 worker_id = 1; // Specify worker ID for deregistration
+}
 
 message DeregisterWorkerResponse {}
 

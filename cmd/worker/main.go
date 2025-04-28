@@ -83,29 +83,39 @@ func main() {
 
 	// Spawn M worker goroutines
 	var wg sync.WaitGroup
+	jobCounts := make(map[int64]int)
+	var jobMu sync.Mutex
 	slog.Info("Starting worker process", "num_threads", *m)
 	for i := int64(0); i < *m; i++ {
 		wg.Add(1)
 		go func(workerID int64) {
 			defer wg.Done()
 			// Register worker
-			_, err := consolidatorClient.RegisterWorker(ctx, &pb.RegisterWorkerRequest{})
+			resp, err := consolidatorClient.RegisterWorker(ctx, &pb.RegisterWorkerRequest{})
 			if err != nil {
 				slog.Error("Failed to register worker", "worker_id", workerID, "error", err)
 				return
 			}
-			slog.Info("Worker registered successfully", "worker_id", workerID)
+			assignedID := resp.WorkerId
+			slog.Info("Worker registered successfully", "worker_id", assignedID)
 
 			// Run worker
-			if err := worker.Run(ctx); err != nil {
-				slog.Error("Worker failed", "worker_id", workerID, "error", err)
+			jobCount, err := worker.Run(ctx, assignedID)
+			if err != nil {
+				slog.Error("Worker failed", "worker_id", assignedID, "error", err)
 			}
 
+			// Store and log job count
+			jobMu.Lock()
+			jobCounts[assignedID] = jobCount
+			slog.Info("Worker job count", "worker_id", assignedID, "jobs_completed", jobCount)
+			jobMu.Unlock()
+
 			// Deregister worker
-			if _, err := consolidatorClient.DeregisterWorker(ctx, &pb.DeregisterWorkerRequest{}); err != nil {
-				slog.Error("Failed to deregister worker", "worker_id", workerID, "error", err)
+			if _, err := consolidatorClient.DeregisterWorker(ctx, &pb.DeregisterWorkerRequest{WorkerId: assignedID}); err != nil {
+				slog.Error("Failed to deregister worker", "worker_id", assignedID, "error", err)
 			} else {
-				slog.Info("Worker deregistered successfully", "worker_id", workerID)
+				slog.Info("Worker deregistered successfully", "worker_id", assignedID)
 			}
 		}(i)
 	}

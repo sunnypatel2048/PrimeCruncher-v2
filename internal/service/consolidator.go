@@ -19,6 +19,10 @@ type Consolidator struct {
 	closed     chan struct{}
 	wg         sync.WaitGroup
 	workerDone chan struct{}
+	// Track job counts per worker
+	workerJobs map[int64]int
+	workerMu   sync.Mutex
+	workerID   int64
 }
 
 // NewConsolidator creates a new consolidator.
@@ -27,24 +31,26 @@ func NewConsolidator() *Consolidator {
 		results:    make(chan *pb.SubmitResultRequest, 100),
 		closed:     make(chan struct{}),
 		workerDone: make(chan struct{}),
+		workerJobs: make(map[int64]int),
 	}
 	c.wg.Add(1)
 	go c.aggregate()
 	return c
 }
 
-// RegisterWorker increments the worker count.
+// RegisterWorker increments the worker count and assigns an ID.
 func (c *Consolidator) RegisterWorker(ctx context.Context, req *pb.RegisterWorkerRequest) (*pb.RegisterWorkerResponse, error) {
+	workerID := atomic.AddInt64(&c.workerID, 1)
 	atomic.AddInt32(&c.workers, 1)
-	slog.Info("Worker registered", "total_workers", atomic.LoadInt32(&c.workers))
-	return &pb.RegisterWorkerResponse{}, nil
+	slog.Info("Worker registered", "worker_id", workerID, "total_workers", atomic.LoadInt32(&c.workers))
+	return &pb.RegisterWorkerResponse{WorkerId: workerID}, nil
 }
 
 // DeregisterWorker decrements the worker count.
 func (c *Consolidator) DeregisterWorker(ctx context.Context, req *pb.DeregisterWorkerRequest) (*pb.DeregisterWorkerResponse, error) {
 	currentWorkers := atomic.AddInt32(&c.workers, -1)
-	slog.Info("Worker deregistered", "total_workers", currentWorkers)
-	if currentWorkers == 0 {
+	slog.Info("Worker deregistered", "worker_id", req.WorkerId, "total_workers", currentWorkers)
+	if currentWorkers <= 0 {
 		slog.Info("All workers deregistered, closing workerDone")
 		close(c.workerDone)
 	}
@@ -59,6 +65,10 @@ func (c *Consolidator) SubmitResult(ctx context.Context, req *pb.SubmitResultReq
 	}
 	select {
 	case c.results <- req:
+		// Increment job count for the worker
+		c.workerMu.Lock()
+		c.workerJobs[req.WorkerId]++
+		c.workerMu.Unlock()
 		return &pb.SubmitResultResponse{}, nil
 	case <-ctx.Done():
 		return nil, ctx.Err()
@@ -76,7 +86,7 @@ func (c *Consolidator) aggregate() {
 		case result := <-c.results:
 			if result != nil {
 				atomic.AddUint64(&c.total, uint64(result.PrimeCount))
-				slog.Info("Received result", "pathname", result.Pathname, "start", result.Start, "length", result.Length, "primes", result.PrimeCount)
+				slog.Info("Received result", "pathname", result.Pathname, "start", result.Start, "length", result.Length, "primes", result.PrimeCount, "worker_id", result.WorkerId)
 			}
 		case <-c.workerDone:
 			slog.Info("All workers done, shutting down consolidator")
@@ -93,6 +103,17 @@ func (c *Consolidator) aggregate() {
 // GetTotal returns the total prime count.
 func (c *Consolidator) GetTotal() uint64 {
 	return atomic.LoadUint64(&c.total)
+}
+
+// GetJobCounts returns the number of jobs completed by each worker.
+func (c *Consolidator) GetJobCounts() []int {
+	c.workerMu.Lock()
+	defer c.workerMu.Unlock()
+	counts := make([]int, 0, len(c.workerJobs))
+	for _, count := range c.workerJobs {
+		counts = append(counts, count)
+	}
+	return counts
 }
 
 // Wait waits for the consolidator to finish.

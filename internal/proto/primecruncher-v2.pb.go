@@ -131,6 +131,7 @@ type SubmitResultRequest struct {
 	Start         int64                  `protobuf:"varint,2,opt,name=start,proto3" json:"start,omitempty"`
 	Length        int64                  `protobuf:"varint,3,opt,name=length,proto3" json:"length,omitempty"`
 	PrimeCount    int64                  `protobuf:"varint,4,opt,name=prime_count,json=primeCount,proto3" json:"prime_count,omitempty"`
+	WorkerId      int64                  `protobuf:"varint,5,opt,name=worker_id,json=workerId,proto3" json:"worker_id,omitempty"` // Added to track worker submitting result
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -189,6 +190,13 @@ func (x *SubmitResultRequest) GetLength() int64 {
 func (x *SubmitResultRequest) GetPrimeCount() int64 {
 	if x != nil {
 		return x.PrimeCount
+	}
+	return 0
+}
+
+func (x *SubmitResultRequest) GetWorkerId() int64 {
+	if x != nil {
+		return x.WorkerId
 	}
 	return 0
 }
@@ -267,6 +275,7 @@ func (*RegisterWorkerRequest) Descriptor() ([]byte, []int) {
 
 type RegisterWorkerResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
+	WorkerId      int64                  `protobuf:"varint,1,opt,name=worker_id,json=workerId,proto3" json:"worker_id,omitempty"` // Return assigned worker ID
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -301,8 +310,16 @@ func (*RegisterWorkerResponse) Descriptor() ([]byte, []int) {
 	return file_internal_proto_primecruncher_v2_proto_rawDescGZIP(), []int{5}
 }
 
+func (x *RegisterWorkerResponse) GetWorkerId() int64 {
+	if x != nil {
+		return x.WorkerId
+	}
+	return 0
+}
+
 type DeregisterWorkerRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
+	WorkerId      int64                  `protobuf:"varint,1,opt,name=worker_id,json=workerId,proto3" json:"worker_id,omitempty"` // Specify worker ID for deregistration
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -335,6 +352,13 @@ func (x *DeregisterWorkerRequest) ProtoReflect() protoreflect.Message {
 // Deprecated: Use DeregisterWorkerRequest.ProtoReflect.Descriptor instead.
 func (*DeregisterWorkerRequest) Descriptor() ([]byte, []int) {
 	return file_internal_proto_primecruncher_v2_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *DeregisterWorkerRequest) GetWorkerId() int64 {
+	if x != nil {
+		return x.WorkerId
+	}
+	return 0
 }
 
 type DeregisterWorkerResponse struct {
@@ -495,17 +519,20 @@ const file_internal_proto_primecruncher_v2_proto_rawDesc = "" +
 	"\bpathname\x18\x01 \x01(\tR\bpathname\x12\x14\n" +
 	"\x05start\x18\x02 \x01(\x03R\x05start\x12\x16\n" +
 	"\x06length\x18\x03 \x01(\x03R\x06length\x12\x12\n" +
-	"\x04done\x18\x04 \x01(\bR\x04done\"\x80\x01\n" +
+	"\x04done\x18\x04 \x01(\bR\x04done\"\x9d\x01\n" +
 	"\x13SubmitResultRequest\x12\x1a\n" +
 	"\bpathname\x18\x01 \x01(\tR\bpathname\x12\x14\n" +
 	"\x05start\x18\x02 \x01(\x03R\x05start\x12\x16\n" +
 	"\x06length\x18\x03 \x01(\x03R\x06length\x12\x1f\n" +
 	"\vprime_count\x18\x04 \x01(\x03R\n" +
-	"primeCount\"\x16\n" +
+	"primeCount\x12\x1b\n" +
+	"\tworker_id\x18\x05 \x01(\x03R\bworkerId\"\x16\n" +
 	"\x14SubmitResultResponse\"\x17\n" +
-	"\x15RegisterWorkerRequest\"\x18\n" +
-	"\x16RegisterWorkerResponse\"\x19\n" +
-	"\x17DeregisterWorkerRequest\"\x1a\n" +
+	"\x15RegisterWorkerRequest\"5\n" +
+	"\x16RegisterWorkerResponse\x12\x1b\n" +
+	"\tworker_id\x18\x01 \x01(\x03R\bworkerId\"6\n" +
+	"\x17DeregisterWorkerRequest\x12\x1b\n" +
+	"\tworker_id\x18\x01 \x01(\x03R\bworkerId\"\x1a\n" +
 	"\x18DeregisterWorkerResponse\"~\n" +
 	"\x13FetchSegmentRequest\x12\x1a\n" +
 	"\bpathname\x18\x01 \x01(\tR\bpathname\x12\x14\n" +

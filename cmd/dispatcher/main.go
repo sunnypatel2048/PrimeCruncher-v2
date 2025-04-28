@@ -8,7 +8,9 @@ import (
 	"net"
 	"os"
 	"os/signal"
+	"sort"
 	"sync"
+	"time"
 
 	"github.com/sunnypatel2048/primecruncher-v2/internal/config"
 	pb "github.com/sunnypatel2048/primecruncher-v2/internal/proto"
@@ -41,6 +43,9 @@ func main() {
 
 	_, cancel := context.WithCancel(context.Background())
 	defer cancel()
+
+	// Start timing
+	startTime := time.Now()
 
 	// Start dispatcher
 	dispatcher, err := service.NewDispatcher(*dataPath, *n)
@@ -101,10 +106,51 @@ func main() {
 	slog.Info("Waiting for consolidator to finish")
 	consolidator.Wait()
 	slog.Info("All tasks completed, printing total")
+	elapsed := time.Since(startTime).Milliseconds()
 	fmt.Printf("Total primes: %d\n", consolidator.GetTotal())
+	slog.Info("Execution completed", "elapsed_time_ms", elapsed)
+
+	// Log job statistics
+	jobCounts := consolidator.GetJobCounts()
+	if len(jobCounts) > 0 {
+		min, max, avg, median := calculateStats(jobCounts)
+		slog.Info("Job completion stats",
+			"min_jobs", min,
+			"max_jobs", max,
+			"average_jobs", avg,
+			"median_jobs", median,
+			"total_jobs", len(jobCounts))
+	}
 
 	// Shutdown
 	dispatcherServer.GracefulStop()
 	consolidatorServer.GracefulStop()
 	wg.Wait()
+}
+
+// calculateStats computes min, max, average, and median of a slice of integers.
+func calculateStats(counts []int) (min, max int, avg, median float64) {
+	if len(counts) == 0 {
+		return 0, 0, 0, 0
+	}
+	min = counts[0]
+	max = counts[0]
+	sum := 0
+	for _, c := range counts {
+		if c < min {
+			min = c
+		}
+		if c > max {
+			max = c
+		}
+		sum += c
+	}
+	avg = float64(sum) / float64(len(counts))
+	sort.Ints(counts)
+	if len(counts)%2 == 0 {
+		median = float64(counts[len(counts)/2-1]+counts[len(counts)/2]) / 2
+	} else {
+		median = float64(counts[len(counts)/2])
+	}
+	return
 }

@@ -31,18 +31,19 @@ func NewWorker(dispatcherClient pb.DispatcherServiceClient, consolidatorClient p
 	}
 }
 
-// Run starts the worker process.
-func (w *Worker) Run(ctx context.Context) error {
+// Run starts the worker process and returns the number of jobs completed.
+func (w *Worker) Run(ctx context.Context, workerID int64) (int, error) {
 	time.Sleep(time.Duration(400+rand.Intn(200)) * time.Millisecond)
 
+	jobCount := 0
 	for {
 		// Get job from dispatcher
 		resp, err := w.dispatcherClient.GetJob(ctx, &pb.GetJobRequest{})
 		if err != nil {
-			return err
+			return jobCount, err
 		}
 		if resp.Done {
-			return nil
+			return jobCount, nil
 		}
 
 		// Fetch segment from fileserver
@@ -90,11 +91,13 @@ func (w *Worker) Run(ctx context.Context) error {
 			Start:      resp.Start,
 			Length:     resp.Length,
 			PrimeCount: primeCount,
+			WorkerId:   workerID,
 		})
 		if err != nil {
 			slog.Error("Failed to submit result", "error", err)
 			continue
 		}
-		slog.Info("Processed job", "pathname", resp.Pathname, "start", resp.Start, "length", resp.Length, "primes", primeCount)
+		slog.Info("Processed job", "pathname", resp.Pathname, "start", resp.Start, "length", resp.Length, "primes", primeCount, "worker_id", workerID)
+		jobCount++
 	}
 }
