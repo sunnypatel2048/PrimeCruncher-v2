@@ -135,7 +135,7 @@ Run the components in separate terminal sessions. The programs accept command-li
 * **Concurrency:** Workers run as separate processes, with ```M``` goroutines per process for intra-process parallelism. gRPC ensures low-latency communication.
 * **Correctness:** No race conditions due to gRPC’s request-response model and atomic operations in the consolidator.
 * **Efficiency:** Minimal data is communicated (job descriptors, result counts, file chunks). Buffered channels and streaming optimize performance.
-* **Robustness:** Timeout mechanisms and graceful shutdown handle errors and interrupts.
+* **Robustness:** Graceful shutdown handle errors and interrupts.
 
 ### Implementation Choices
 
